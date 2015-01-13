@@ -1,4 +1,4 @@
-CPPSRCS= switch-err.cc
+CPPSRCS= main.cc
 CSRCS= 
 OBJS= $(patsubst %.cc,%.o,$(CPPSRCS)) $(patsubst %.c,%.o,$(CSRCS))
 EXEC= switch-err
@@ -23,12 +23,6 @@ all: $(EXEC)
 
 $(EXEC): $(OBJS) $(HEADERS)
 	$(GPP) -o $(EXEC) $(OBJS) $(CFLAGS) $(LIBS)
-
-phase-cmp: phase-cmp.cc
-	$(GPP) -o $@ -Wall -O2 $^
-
-vote-phase: vote-phase.cc
-	$(GPP) -o $@ -Wall -O2 $^
 
 # This way of building dependencies (per-file) described at
 # http://make.paulandlesley.org/autodep.html

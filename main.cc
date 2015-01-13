@@ -490,7 +490,12 @@ FILE * openFile(char *filename) {
 int getLocalAnc(FILE *hapmixFile) {
   int pos;
   float homozyPop1, het, homozyPop2;
-  fscanf(hapmixFile, "%d %f %f %f", &pos, &homozyPop1, &het, &homozyPop2);
+  int ret = fscanf(hapmixFile, "%d %f %f %f", &pos, &homozyPop1, &het,
+                   &homozyPop2);
+  if (ret != 4) {
+    fprintf(stderr, "Error, malformed line in local ancestry file\n");
+    exit(1);
+  }
   float sum = homozyPop1 + het + homozyPop2;
   assert(sum >= 0.997f && sum <= 1.003f);
 
