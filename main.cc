@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include <string.h>
-#include <boost/dynamic_bitset.hpp>
+#include <set>
 
 
 void parseCmdLine(int argc, char **argv);
@@ -41,7 +41,7 @@ bool verbose = false;
 // begin after any individuals have been skipped.
 char *omitIndFile = NULL;
 // Set of individuals to omit from <estimated phgeno>, read from omitIndFile
-boost::dynamic_bitset<> omitIndSet;
+std::set<int> omitIndSet;
 // When run with -l option:
 // Stratifies switch errors by local ancestry status:
 // homozygous POP1 (typically European), heterozygous, homozygous POP2
@@ -90,11 +90,7 @@ int main(int argc, char **argv) {
     int id;
     while (fscanf(omitIn, "%d", &id) == 1) {
       assert(id >= 0);
-      if (omitIndSet.size() <= (unsigned int) id) {
-	int newSize = (id / 64 + 1) * 64; // resize in terms of unsigned longs
-	omitIndSet.resize(newSize);
-      }
-      omitIndSet.set(id);
+      omitIndSet.insert(id);
     }
     fclose(omitIn);
   }
@@ -172,7 +168,7 @@ int main(int argc, char **argv) {
     while ((c = fgetc(estG)) != '\n' && i < 2*numSamples) {
       int curSamp = curHap / 2;
       curHap++;
-      if ((unsigned int) curSamp < omitIndSet.size() && omitIndSet[curSamp]) {
+      if (omitIndSet.find(curSamp) != omitIndSet.end()) {
 	continue; // omit this sample / haplotype
       }
 
